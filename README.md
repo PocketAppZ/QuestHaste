@@ -2,7 +2,7 @@
 
 ## Intro:
 
-QuestHaste is a small Addon for vanilla World of Warcraft (1.12), it allow fast turn in of quests, especially useful for repeatable quests (e.g. Alterac Valley quests)
+QuestHaste is a small Addon for vanilla World of Warcraft (1.12), it allows fast turn in of quests, especially useful for repeatable quests (e.g. Alterac Valley quests)
 
 ## Usage:
 
