@@ -12,9 +12,9 @@ local QuestHaste_Usage = [[
 |cffffff00## QuestHaste Usage:
 
 * Quest (active and available) opening/progress modifiers
-    * Shift   auto complete/accept and save
+    * Control   auto complete/accept and save
     * Alt   forget
-    * Control   complete/accept if not saved, hold if saved
+    * Shift   complete/accept if not saved, hold if saved
     * No Modifier   complete/accept if saved
 * Gossip opening modifiers
     * Shift   auto complete/accept first saved quest in gossip
@@ -90,17 +90,25 @@ function QuestHaste_EventHandler.GOSSIP_SHOW()
         end
     end
     if IsShiftKeyDown() then
+        for k,v in filterEvens({GetGossipAvailableQuests()}) do
+            if QuestHaste_IsAutoAccept(v) then
+                SelectGossipAvailableQuest(k)
+                return
+            end
+        end
         for k,v in filterEvens({GetGossipActiveQuests()}) do
             if QuestHaste_IsAutoComplete(v) then
                 SelectGossipActiveQuest(k)
                 return
             end
         end
-        for k,v in filterEvens({GetGossipAvailableQuests()}) do
-            if QuestHaste_IsAutoAccept(v) then
-                SelectGossipAvailableQuest(k)
-                return
-            end
+        if GetGossipAvailableQuests() then
+            SelectGossipAvailableQuest(1)
+            return
+        end
+        if GetGossipActiveQuests() then
+            SelectGossipActiveQuest(1)
+            return
         end
     end
 end
@@ -108,10 +116,10 @@ end
 function QuestHaste_EventHandler.QUEST_PROGRESS()
     local title = GetTitleText()
     
-    if IsShiftKeyDown() then QuestHaste_AddAutoComplete(title)
+    if IsControlKeyDown() then QuestHaste_AddAutoComplete(title)
     elseif IsAltKeyDown() then QuestHaste_RemoveAutoComplete(title) return end
 
-    if (QuestHaste.currentQuest == title or QuestHaste_IsAutoComplete(title) ~= (IsControlKeyDown() ~= nil)) and QuestFrameCompleteButton:IsEnabled()==1 then
+    if (QuestHaste.currentQuest == title or QuestHaste_IsAutoComplete(title) ~= (IsShiftKeyDown() ~= nil)) and QuestFrameCompleteButton:IsEnabled()==1 then
         CompleteQuest()
     else
         QuestHaste.currentQuest = ""
@@ -121,10 +129,10 @@ end
 function QuestHaste_EventHandler.QUEST_COMPLETE()
     local title = GetTitleText()
     
-    if IsShiftKeyDown() then QuestHaste_AddAutoComplete(title)
+    if IsControlKeyDown() then QuestHaste_AddAutoComplete(title)
     elseif IsAltKeyDown() then QuestHaste_RemoveAutoComplete(title) return end
     
-    if (QuestHaste.currentQuest == title or QuestHaste_IsAutoComplete(title) ~= (IsControlKeyDown() ~= nil)) and QuestFrameCompleteQuestButton:IsEnabled()==1 then
+    if (QuestHaste.currentQuest == title or QuestHaste_IsAutoComplete(title) ~= (IsShiftKeyDown() ~= nil)) and QuestFrameCompleteQuestButton:IsEnabled()==1 then
         GetQuestReward()
     end
     QuestHaste.currentQuest = ""
@@ -133,10 +141,10 @@ end
 function QuestHaste_EventHandler.QUEST_DETAIL()
     local title = GetTitleText()
     
-    if IsShiftKeyDown() then QuestHaste_AddAutoAccept(title)
+    if IsControlKeyDown() then QuestHaste_AddAutoAccept(title)
     elseif IsAltKeyDown() then QuestHaste_RemoveAutoAccept(title) return end
 
-    if QuestHaste.currentQuest == title or QuestHaste_IsAutoAccept(title) ~= (IsControlKeyDown() ~= nil) then
+    if QuestHaste.currentQuest == title or QuestHaste_IsAutoAccept(title) ~= (IsShiftKeyDown() ~= nil) then
         AcceptQuest()
     else
         QuestHaste.currentQuest = ""
