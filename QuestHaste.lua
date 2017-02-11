@@ -1,18 +1,43 @@
 QuestHaste_EventHandler = CreateFrame("FRAME")
 QuestHaste_EventHandler:RegisterEvent("ADDON_LOADED")
 
+local QuestHaste_EventList = {
+    "QUEST_PROGRESS",
+    "QUEST_COMPLETE",
+    "QUEST_DETAIL",
+    "GOSSIP_SHOW"
+}
+
+local QuestHaste_Usage = [[
+|cffffff00## QuestHaste Usage:
+
+* Quest (active and available) opening/progress modifiers
+    * Shift   auto complete/accept and save
+    * Alt   forget
+    * Control   complete/accept if not saved, hold if saved
+    * No Modifier   complete/accept if saved
+* Gossip opening modifiers
+    * Shift   auto complete/accept first saved quest in gossip
+* Command line options (/qhaste, /questhaste):
+    * usage   display usage instructions
+    * add   saves current quest
+    * list   list all saved quests
+    * pause   disable QuestHaste
+    * resume   activate QuestHaste
+    * complete   complete/accept current quest
+    * reset   clears all saved quests|r
+]]
+
 function QuestHaste_RegisterEvents()
-    QuestHaste_EventHandler:RegisterEvent("QUEST_PROGRESS")
-    QuestHaste_EventHandler:RegisterEvent("QUEST_COMPLETE")
-    QuestHaste_EventHandler:RegisterEvent("QUEST_DETAIL")
-    QuestHaste_EventHandler:RegisterEvent("GOSSIP_SHOW")
+    for _,e in QuestHaste_EventList do
+        QuestHaste_EventHandler:RegisterEvent(e)
+    end
 end
 
 function QuestHaste_UnregisterEvents()
-    QuestHaste_EventHandler:UnregisterEvent("QUEST_PROGRESS")
-    QuestHaste_EventHandler:UnregisterEvent("QUEST_COMPLETE")
-    QuestHaste_EventHandler:UnregisterEvent("QUEST_DETAIL")
-    QuestHaste_EventHandler:UnregisterEvent("GOSSIP_SHOW")
+    for _,e in QuestHaste_EventList do
+        QuestHaste_EventHandler:UnregisterEvent(e)
+    end
 end
 
 local function filterEvens(t)
@@ -38,8 +63,6 @@ function QuestHaste_EventHandler.GOSSIP_SHOW()
     local function SetupBackground(b)
         b:SetAllPoints(b:GetParent()) b:SetDrawLayer("BACKGROUND",-1) b:SetTexture(1,1,1) b:SetGradientAlpha("HORIZONTAL", 0.5, 1, 0, 0.5, 1, 1, 0, 0)
     end
-    local available = filterEvens({GetGossipAvailableQuests()})
-    local active = filterEvens({GetGossipActiveQuests()})
 
     for i = 1,32 do
         local f = getglobal("GossipTitleButton"..i)
@@ -68,15 +91,13 @@ function QuestHaste_EventHandler.GOSSIP_SHOW()
     end
     if IsShiftKeyDown() then
         for k,v in filterEvens({GetGossipActiveQuests()}) do
-            if contained(active, v) and QuestHaste_IsAutoComplete(v) then
+            if QuestHaste_IsAutoComplete(v) then
                 SelectGossipActiveQuest(k)
                 return
             end
         end
-    end
-    if IsControlKeyDown() then
         for k,v in filterEvens({GetGossipAvailableQuests()}) do
-            if contained(available, v) and QuestHaste_IsAutoAccept(v) then
+            if QuestHaste_IsAutoAccept(v) then
                 SelectGossipAvailableQuest(k)
                 return
             end
@@ -138,6 +159,7 @@ function QuestHaste_EventHandler.ADDON_LOADED()
         end
         QuestHaste_RegisterEvents()
         QuestHaste_EventHandler:UnregisterEvent("ADDON_LOADED")
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffff88QuestHaste|r loaded. See /qhelp usage")
     end
 end
 
@@ -218,7 +240,9 @@ end
 
 local function CommandParser(msg, editbox)
     local _,_,command, rest = string.find(msg,"^(%S*)%s*(.-)$")
-    if command == "add" then
+    if command == "usage" then
+        DEFAULT_CHAT_FRAME:AddMessage(QuestHaste_Usage)
+    elseif command == "add" then
         if QuestFrame:IsShown() then
             local title = GetTitleText()
             QuestHaste_AddAutoComplete(title)
@@ -230,8 +254,22 @@ local function CommandParser(msg, editbox)
     --    QuestHaste.autolist[title] = nil
     elseif command == "list" then
         DEFAULT_CHAT_FRAME:AddMessage("QuestHaste quest list:")
-        for k,_ in QuestHaste.autolist do
+        for k,v in QuestHaste.autolist do
             DEFAULT_CHAT_FRAME:AddMessage("    "..k)
+            local opts = "        ("
+            if QuestHaste_IsAutoAccept(k) then
+                opts = opts .. "|cff00ff00"
+            else
+                opts = opts .. "|cffff0000"
+            end
+            opts = opts .. "accept|r | "
+            if QuestHaste_IsAutoComplete(k) then
+                opts = opts .. "|cff00ff00"
+            else
+                opts = opts .. "|cffff0000"
+            end
+            opts = opts .. "complete|r)"
+            DEFAULT_CHAT_FRAME:AddMessage(opts)
         end
     elseif command == "pause" then
         DEFAULT_CHAT_FRAME:AddMessage("|cffffff88QuestHaste|r: |cffff0000paused|r.")
@@ -244,8 +282,9 @@ local function CommandParser(msg, editbox)
     elseif command == "reset" then
         QuestHaste.autolist = {}
     else
-        DEFAULT_CHAT_FRAME:AddMessage("Syntax: /qhaste add\n/qhaste list\n/qhaste complete\n/qhaste pause\n/qhaste resume\n/qhaste reset");
+        DEFAULT_CHAT_FRAME:AddMessage("Syntax:\n/qhaste usage\n/qhaste add\n/qhaste list\n/qhaste complete\n/qhaste pause\n/qhaste resume\n/qhaste reset");
     end
 end
-SLASH_QUESTHASTE1 = "/qhaste"
+SLASH_QUESTHASTE1 = "/questhaste"
+SLASH_QUESTHASTE2 = "/qhaste"
 SlashCmdList["QUESTHASTE"] = CommandParser
