@@ -159,7 +159,7 @@ function QuestHaste_EventHandler.ADDON_LOADED()
         end
         QuestHaste_RegisterEvents()
         QuestHaste_EventHandler:UnregisterEvent("ADDON_LOADED")
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffff88QuestHaste|r loaded. See /qhelp usage")
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffff88QuestHaste|r loaded. See /qhaste usage")
     end
 end
 

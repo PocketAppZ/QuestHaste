@@ -13,7 +13,7 @@ QuestHaste is a small Addon for vanilla World of Warcraft (1.12), it allows fast
     * No Modifier   complete/accept if saved
 * Gossip opening modifiers
     * Shift         auto complete/accept first saved quest in gossip
-* Command line options (/qhaste, /questhaste):
+* Command line options (/qhaste, /questhaste)
     * usage     display usage instructions
     * add       saves current quest
     * list      list all saved quests
