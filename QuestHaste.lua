@@ -188,11 +188,11 @@ QuestHaste_EventHandler:SetScript("OnEvent",
 )
 
 function QuestHaste_IsAutoComplete(title)
-    return QuestHaste.autolist[title] and QuestHaste.autolist[title].complete
+    return (QuestHaste.autolist[title] or false) and QuestHaste.autolist[title].complete
 end
 
 function QuestHaste_IsAutoAccept(title)
-    return QuestHaste.autolist[title] and QuestHaste.autolist[title].accept
+    return (QuestHaste.autolist[title] or false) and QuestHaste.autolist[title].accept
 end
 
 function QuestHaste_AddAutoComplete(title)
