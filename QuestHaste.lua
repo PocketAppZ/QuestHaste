@@ -96,21 +96,25 @@ function QuestHaste_EventHandler.GOSSIP_SHOW()
     if IsShiftKeyDown() then
         for k,v in available do
             if QuestHaste_IsAutoAccept(v) then
+                QuestHaste.currentQuest = v
                 SelectGossipAvailableQuest(k)
                 return
             end
         end
         for k,v in active do
             if QuestHaste_IsAutoComplete(v) then
+                QuestHaste.currentQuest = v
                 SelectGossipActiveQuest(k)
                 return
             end
         end
         if GetGossipAvailableQuests() then
+            QuestHaste.currentQuest = v
             SelectGossipAvailableQuest(1)
             return
         end
         if GetGossipActiveQuests() then
+            QuestHaste.currentQuest = v
             SelectGossipActiveQuest(1)
             return
         end
