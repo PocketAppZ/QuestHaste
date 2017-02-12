@@ -2,7 +2,6 @@
 ## Title: QuestHaste
 ## Notes: boost your quest delivery
 ## SavedVariables: QuestHaste
-## Version: 0.3-rc0
+## Version: 0.3-rc2
 ## Author: WobLight
 QuestHaste.lua
-
