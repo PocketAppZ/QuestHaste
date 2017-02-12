@@ -64,6 +64,9 @@ function QuestHaste_EventHandler.GOSSIP_SHOW()
         b:SetAllPoints(b:GetParent()) b:SetDrawLayer("BACKGROUND",-1) b:SetTexture(1,1,1) b:SetGradientAlpha("HORIZONTAL", 0.5, 1, 0, 0.5, 1, 1, 0, 0)
     end
 
+    local available = filterEvens({GetGossipAvailableQuests()})
+    local active = filterEvens({GetGossipActiveQuests()})
+    
     for i = 1,32 do
         local f = getglobal("GossipTitleButton"..i)
         
@@ -71,11 +74,12 @@ function QuestHaste_EventHandler.GOSSIP_SHOW()
             f.QHaste = {background = f:CreateTexture(), oldScript = f:GetScript("OnClick")}
             SetupBackground(f.QHaste.background)
             local function OnClick(...)
-                if IsAltKeyDown() and QuestHaste.autolist[f:GetText()] then
-                    if contained(available, f:GetText()) then
-                        QuestHaste_RemoveAutoAccept(f:GetText())
+                local title = f:GetText()
+                if IsAltKeyDown() and QuestHaste.autolist[title] then
+                    if contained(available, title) then
+                        QuestHaste_RemoveAutoAccept(title)
                     else
-                        QuestHaste_RemoveAutoComplete(f:GetText())
+                        QuestHaste_RemoveAutoComplete(title)
                     end
                     f.QHaste.background:Hide()
                 else
@@ -90,13 +94,13 @@ function QuestHaste_EventHandler.GOSSIP_SHOW()
         end
     end
     if IsShiftKeyDown() then
-        for k,v in filterEvens({GetGossipAvailableQuests()}) do
+        for k,v in available do
             if QuestHaste_IsAutoAccept(v) then
                 SelectGossipAvailableQuest(k)
                 return
             end
         end
-        for k,v in filterEvens({GetGossipActiveQuests()}) do
+        for k,v in active do
             if QuestHaste_IsAutoComplete(v) then
                 SelectGossipActiveQuest(k)
                 return
