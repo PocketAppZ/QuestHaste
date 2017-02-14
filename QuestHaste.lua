@@ -109,12 +109,12 @@ function QuestHaste_EventHandler.GOSSIP_SHOW()
             end
         end
         if GetGossipAvailableQuests() then
-            QuestHaste.currentQuest = v
+            QuestHaste.currentQuest = available[1]
             SelectGossipAvailableQuest(1)
             return
         end
         if GetGossipActiveQuests() then
-            QuestHaste.currentQuest = v
+            QuestHaste.currentQuest = active[1]
             SelectGossipActiveQuest(1)
             return
         end
