@@ -124,10 +124,14 @@ end
 function QuestHaste_EventHandler.QUEST_PROGRESS()
     local title = GetTitleText()
     
-    if IsControlKeyDown() then QuestHaste_AddAutoComplete(title)
-    elseif IsAltKeyDown() then QuestHaste_RemoveAutoComplete(title) return end
+    if IsControlKeyDown() then
+        QuestHaste_AddAutoComplete(title)
+    elseif IsAltKeyDown() then
+        QuestHaste_RemoveAutoComplete(title) return
+    end
 
     if (QuestHaste.currentQuest == title or QuestHaste_IsAutoComplete(title) ~= (IsShiftKeyDown() ~= nil)) and QuestFrameCompleteButton:IsEnabled()==1 then
+        QuestHaste.currentQuest = title
         CompleteQuest()
     else
         QuestHaste.currentQuest = ""
