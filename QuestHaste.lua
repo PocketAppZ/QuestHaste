@@ -100,7 +100,6 @@ local function menuHandler(available, active, name, accept, complete)
                 logCompleted[title] = true
             end
         end
-        
         for k,v in active do
             if logCompleted[v] then
                 QuestHaste.currentQuest = v
@@ -149,7 +148,7 @@ function QuestHaste_EventHandler.QUEST_GREETING()
     local available = {}
     local active = {}
     for k = 1, GetNumAvailableQuests() do
-        table.insert(active, GetAvailableTitle(k))
+        table.insert(available, GetAvailableTitle(k))
     end
     for k = 1, GetNumActiveQuests() do
         table.insert(active, GetActiveTitle(k))
