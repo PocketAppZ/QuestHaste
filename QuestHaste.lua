@@ -151,7 +151,7 @@ function QuestHaste_EventHandler.QUEST_PROGRESS()
         QuestHaste_RemoveAutoComplete(title) return
     end
 
-    if (QuestHaste.currentQuest == title or QuestHaste_IsAutoComplete(title) ~= (IsShiftKeyDown() ~= nil)) and QuestFrameCompleteButton:IsEnabled()==1 then
+    if (QuestHaste.currentQuest == title or QuestHaste_IsAutoComplete(title) ~= (IsShiftKeyDown() ~= nil)) and IsQuestCompletable() then
         QuestHaste.currentQuest = title
         CompleteQuest()
     else
@@ -165,7 +165,7 @@ function QuestHaste_EventHandler.QUEST_COMPLETE()
     if IsControlKeyDown() then QuestHaste_AddAutoComplete(title)
     elseif IsAltKeyDown() then QuestHaste_RemoveAutoComplete(title) return end
     
-    if (QuestHaste.currentQuest == title or QuestHaste_IsAutoComplete(title) ~= (IsShiftKeyDown() ~= nil)) and QuestFrameCompleteQuestButton:IsEnabled()==1 and GetNumQuestChoices() == 0 then
+    if (QuestHaste.currentQuest == title or QuestHaste_IsAutoComplete(title) ~= (IsShiftKeyDown() ~= nil)) and IsQuestCompletable() and GetNumQuestChoices() == 0 then
         GetQuestReward()
     end
     QuestHaste.currentQuest = ""
@@ -268,12 +268,12 @@ function QuestHaste_Proceed()
         SelectGossipActiveQuest(1)
     elseif QuestFrame:IsShown() then
         local title = GetTitleText()
-        if QuestFrameAcceptButton:IsShown() and QuestFrameAcceptButton:IsEnabled()==1 then
+        if QuestFrameAcceptButton:IsShown() then
             AcceptQuest()
-        elseif QuestFrameCompleteButton:IsShown() and QuestFrameCompleteButton:IsEnabled()==1 then
+        elseif QuestFrameCompleteButton:IsShown() and IsQuestCompletable() then
             QuestHaste.currentQuest = title
             CompleteQuest()
-        elseif QuestFrameCompleteQuestButton:IsShown() and QuestFrameCompleteQuestButton:IsEnabled()==1 then
+        elseif QuestFrameCompleteQuestButton:IsShown() and IsQuestCompletable() then
             GetQuestReward()
         end
     end
