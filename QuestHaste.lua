@@ -5,7 +5,8 @@ local QuestHaste_EventList = {
     "QUEST_PROGRESS",
     "QUEST_COMPLETE",
     "QUEST_DETAIL",
-    "GOSSIP_SHOW"
+    "GOSSIP_SHOW",
+    "QUEST_GREETING"
 }
 
 local QuestHaste_Usage = [[
@@ -59,16 +60,13 @@ local function contained(t,val)
     return false
 end
 
-function QuestHaste_EventHandler.GOSSIP_SHOW()
+local function menuHandler(available, active, name, accept, complete)
     local function SetupBackground(b)
         b:SetAllPoints(b:GetParent()) b:SetDrawLayer("BACKGROUND",-1) b:SetTexture(1,1,1) b:SetGradientAlpha("HORIZONTAL", 0.5, 1, 0, 0.5, 1, 1, 0, 0)
     end
-
-    local available = filterEvens({GetGossipAvailableQuests()})
-    local active = filterEvens({GetGossipActiveQuests()})
     
     for i = 1,32 do
-        local f = getglobal("GossipTitleButton"..i)
+        local f = getglobal(name..i)
         
         if f.QHaste == nil then
             f.QHaste = {background = f:CreateTexture(), oldScript = f:GetScript("OnClick")}
@@ -88,38 +86,61 @@ function QuestHaste_EventHandler.GOSSIP_SHOW()
             end
             f:SetScript("OnClick",OnClick)
         end
-        if QuestHaste.autolist[f:GetText()]
-        then f.QHaste.background:Show()
-        else f.QHaste.background:Hide()
+        if QuestHaste.autolist[f:GetText()] then
+            f.QHaste.background:Show()
+        else
+            f.QHaste.background:Hide()
         end
     end
     if IsShiftKeyDown() then
         for k,v in available do
             if QuestHaste_IsAutoAccept(v) then
                 QuestHaste.currentQuest = v
-                SelectGossipAvailableQuest(k)
+                accept(k)
                 return
             end
         end
         for k,v in active do
             if QuestHaste_IsAutoComplete(v) then
                 QuestHaste.currentQuest = v
-                SelectGossipActiveQuest(k)
+                complete(k)
                 return
             end
         end
-        if GetGossipAvailableQuests() then
+        
+        if next(available) then
             QuestHaste.currentQuest = available[1]
-            SelectGossipAvailableQuest(1)
+            accept(1)
             return
         end
-        if GetGossipActiveQuests() then
+        if next(active) then
             QuestHaste.currentQuest = active[1]
-            SelectGossipActiveQuest(1)
+            complete(1)
             return
         end
     end
 end
+    
+function QuestHaste_EventHandler.GOSSIP_SHOW()
+    local available = filterEvens({GetGossipAvailableQuests()})
+    local active = filterEvens({GetGossipActiveQuests()})
+    local name = "GossipTitleButton"
+    menuHandler(available, active, name, SelectGossipAvailableQuest, SelectGossipActiveQuest)
+end
+
+function QuestHaste_EventHandler.QUEST_GREETING()
+    local available = {}
+    local active = {}
+    for k = 1, GetNumAvailableQuests() do
+        table.insert(active, GetAvailableTitle(k))
+    end
+    for k = 1, GetNumActiveQuests() do
+        table.insert(active, GetActiveTitle(k))
+    end
+    local name = "QuestTitleButton"
+    menuHandler(available, active, name, SelectAvailableQuest, SelectActiveQuest)
+end
+    
 
 function QuestHaste_EventHandler.QUEST_PROGRESS()
     local title = GetTitleText()
