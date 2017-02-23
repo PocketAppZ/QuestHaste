@@ -93,6 +93,22 @@ local function menuHandler(available, active, name, accept, complete)
         end
     end
     if IsShiftKeyDown() then
+        local logCompleted = {}
+        for k = 1,GetNumQuestLogEntries() do
+            local title, _, _, _, _, completed = GetQuestLogTitle(k)
+            if completed then
+                logCompleted[title] = true
+            end
+        end
+        
+        for k,v in active do
+            if logCompleted[v] then
+                QuestHaste.currentQuest = v
+                complete(k)
+                return
+            end
+        end
+        
         for k,v in available do
             if QuestHaste_IsAutoAccept(v) then
                 QuestHaste.currentQuest = v
@@ -100,6 +116,7 @@ local function menuHandler(available, active, name, accept, complete)
                 return
             end
         end
+
         for k,v in active do
             if QuestHaste_IsAutoComplete(v) then
                 QuestHaste.currentQuest = v
