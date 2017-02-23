@@ -144,7 +144,7 @@ function QuestHaste_EventHandler.QUEST_COMPLETE()
     if IsControlKeyDown() then QuestHaste_AddAutoComplete(title)
     elseif IsAltKeyDown() then QuestHaste_RemoveAutoComplete(title) return end
     
-    if (QuestHaste.currentQuest == title or QuestHaste_IsAutoComplete(title) ~= (IsShiftKeyDown() ~= nil)) and QuestFrameCompleteQuestButton:IsEnabled()==1 then
+    if (QuestHaste.currentQuest == title or QuestHaste_IsAutoComplete(title) ~= (IsShiftKeyDown() ~= nil)) and QuestFrameCompleteQuestButton:IsEnabled()==1 and GetNumQuestChoices() == 0 then
         GetQuestReward()
     end
     QuestHaste.currentQuest = ""
