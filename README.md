@@ -39,9 +39,9 @@ QuestHaste is a small Addon for vanilla World of Warcraft (1.12), it allows fast
 
 JuuJuu
 
-# Change Log
+## Change Log:
 
-## Version 0.4
+### Version 0.4
 * Added missing NPC dialog type.
 * Now scans QuestLog for completed quests when opening a NPC dialog.
 * Fixed error message for quests with reward choice.
