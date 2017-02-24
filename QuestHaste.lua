@@ -18,7 +18,9 @@ local QuestHaste_Usage = [[
     * Shift   complete/accept if not saved, hold if saved
     * No Modifier   complete/accept if saved
 * Gossip opening modifiers
-    * Shift   auto complete/accept first saved quest in gossip
+    * Shift   auto complete/accept quest in gossip
+        (priority: completed, available saved,
+        active saved, available, active)
 * Command line options (/qhaste, /questhaste):
     * usage   display usage instructions
     * add   saves current quest
